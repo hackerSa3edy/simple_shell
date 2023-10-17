@@ -8,7 +8,7 @@
  *
  * Return: (0) always success, (1) otherwise.
 */
-int _env(__attribute__((unused)) Commands *command, char **envp)
+int _env(__attribute__((unused)) Commands * command, char **envp)
 {
 	size_t index, stringLen;
 

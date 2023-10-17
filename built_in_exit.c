@@ -3,7 +3,7 @@
 /**
  * ___exit - exits the shell.
  *
- * @command: the command that the user type.
+ * @CMD: Command type single list.
  * @envp: array of all environment variables.
  *
  * Return: (0) always success, (EXIT_CODE) otherwise.
