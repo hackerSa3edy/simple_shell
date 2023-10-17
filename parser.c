@@ -21,7 +21,6 @@ Commands *parser(char *buffer, ssize_t bufferLen)
 
 	for (index = 0; tokens[index] != NULL; index++)
 	{
-		dprintf(STDOUT_FILENO, "parser\n");
 		if (_strcmp(tokens[index], "||") == 0 && firstCMD != 1)
 			foundOp = 1;
 		else if (_strcmp(tokens[index], "&&") == 0 && firstCMD != 1)
