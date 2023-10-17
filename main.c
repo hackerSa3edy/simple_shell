@@ -37,7 +37,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		commands = parser(buffer, bufferLen);
 
-		execMe(commands, envp, &lastSignal);
+		execMe(commands, envp, &lastSignal, buffer);
 		free_commands(commands);
 	} while (interactiveMode);
 	free(buffer);

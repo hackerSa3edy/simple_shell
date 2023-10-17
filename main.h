@@ -34,7 +34,7 @@ typedef struct commands
 typedef struct built_in_s
 {
 	char *cmd;
-	int (*func)(Commands *, char **);
+	int (*func)(Commands *, char **, int *, char *);
 } built_in_t;
 
 Commands *parser(char *, ssize_t);
@@ -51,18 +51,18 @@ int _strcmp(char *, char *);
 int _strncmp(char *, char *, int);
 char **_getenv(char *, char **);
 void free_2D(char **, int);
-int execMe(Commands *, char **, int *);
-int (*built_in(char *))(Commands *, char **);
+int execMe(Commands *, char **, int *, char *);
+int (*built_in(char *))(Commands *, char **, int *, char *);
 int absolutePath(char *);
 char *commandExists(char *, char **);
 void free_commands(Commands *);
 int doExec(int *, char *);
-void execAbsolutePath(Commands *, int *, char **);
-void execCommandPath(Commands *, int *, char **, char *);
+void execAbsolutePath(Commands *, int *, char **, char *);
+void execCommandPath(Commands *, int *, char **, char *, char *);
 
 /* Shell built-in functions*/
 
-int ___exit(Commands *, char **);
-int _env(Commands *, char **);
+int ___exit(Commands *, char **, int *, char *);
+int _env(Commands *, char **, int *, char *);
 
 #endif /* MAIN_H */
