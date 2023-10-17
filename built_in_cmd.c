@@ -7,7 +7,7 @@
  *
  * Return: pointer to function.
 */
-int (*built_in(char *cmd))(Commands *, char **)
+int (*built_in(char *cmd))(Commands *, char **, int *, char *)
 {
 	built_in_t commands[] = {
 		{"env", _env},
@@ -17,7 +17,6 @@ int (*built_in(char *cmd))(Commands *, char **)
 	int index;
 
 	index = 0;
-	dprintf(STDOUT_FILENO, "built-in\n");
 	while (commands[index].cmd != NULL)
 	{
 		if (_strcmp(cmd, commands[index].cmd) == 0)

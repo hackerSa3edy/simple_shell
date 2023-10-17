@@ -22,6 +22,5 @@ int _strcmp(char *s1, char *s2)
 			}
 			index++;
 		}
-		dprintf(STDOUT_FILENO, "all is working, %s vs %s.\n", s1, s2);
 		return (value);
 }

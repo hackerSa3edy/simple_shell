@@ -5,10 +5,12 @@
  *
  * @CMD: Command type single list.
  * @envp: array of all environment variables.
+ * @lastSignal: last signal from executed functions.
+ * @buffer: the original buffer from getline function.
  *
  * Return: (0) always success, (EXIT_CODE) otherwise.
 */
-int ___exit(Commands *CMD, char **envp)
+int ___exit(Commands *CMD, char **envp, int *lastSignal, char *buffer)
 {
 	int argsLen, status;
 	char **command = CMD->cmd;
@@ -18,6 +20,7 @@ int ___exit(Commands *CMD, char **envp)
 		argsLen++;
 
 	fflush(NULL);
+	free(buffer);
 	if (argsLen > 1)
 	{
 		status = _atoi(command[1]);
@@ -26,5 +29,5 @@ int ___exit(Commands *CMD, char **envp)
 	}
 
 	free_commands(CMD);
-	exit(0);
+	exit(*lastSignal);
 }
