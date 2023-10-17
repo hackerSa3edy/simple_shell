@@ -11,7 +11,7 @@
 Commands *parser(char *buffer, ssize_t bufferLen)
 {
 	Commands *commands = NULL;
-	size_t index, prevIndex = 0, foundOp = 0;
+	size_t index, prevIndex = 0, foundOp = 0, firstCMD = 1;
 	char **tokens = NULL;
 	char *safe_buffer = NULL;
 
@@ -22,11 +22,11 @@ Commands *parser(char *buffer, ssize_t bufferLen)
 	for (index = 0; tokens[index] != NULL; index++)
 	{
 		dprintf(STDOUT_FILENO, "parser\n");
-		if (_strcmp(tokens[index], "||") == 0)
+		if (_strcmp(tokens[index], "||") == 0 && firstCMD != 1)
 			foundOp = 1;
-		else if (_strcmp(tokens[index], "&&") == 0)
+		else if (_strcmp(tokens[index], "&&") == 0 && firstCMD != 1)
 			foundOp = 1;
-		else if (_strcmp(tokens[index], ";") == 0)
+		else if (_strcmp(tokens[index], ";") == 0 && firstCMD != 1)
 			foundOp = 1;
 
 		if (foundOp)
@@ -37,6 +37,7 @@ Commands *parser(char *buffer, ssize_t bufferLen)
 		}
 		if (tokens[index + 1] == NULL)
 			add_node_end(prevIndex, index + 1, NULL, tokens, &commands);
+		firstCMD = 0;
 	}
 
 	free_2D(tokens, index);
