@@ -1,9 +1,9 @@
 #include "main.h"
 
 /**
- * free_commands - frees a Command single list.
+ * free_commands - frees a Command type single list.
  *
- *  @list: Command single list;
+ *  @list: Command type single list;
  *
  * Return: Nothing.
 */
