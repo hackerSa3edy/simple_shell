@@ -42,7 +42,7 @@
 | 9. setenv, unsetenv | [SOON](./) |
 | 10. cd | [SOON](./) |
 | 11. ; | [SOON](./) |
-| 12. && and || | [SOON](./) |
+| 12. && and \|\| | [SOON](./) |
 | 13. alias | [SOON](./) |
 | 14. Variables | [SOON](./) |
 | 15. Comments | [SOON](./) |
