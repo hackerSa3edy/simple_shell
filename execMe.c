@@ -4,45 +4,25 @@
  * execMe - executes commands.
  *
  * @commands: Commands single list to executes its commands.
- * @envp: array of environment variables.
  * @lastSignal: the signal by syscall.
+ * @programName: the running executable name.
+ * @buffer: the original buffer from getline function.
  *
  * Return: lastSignal
 */
-int execMe(Commands *commands, char **envp, int *lastSignal, char *buffer)
+int execMe(Commands *commands, int *lastSignal,
+		char *programName, char *buffer)
 {
 	Commands *cmdExec = commands;
-	int firstCMD = 1;
-	char *command_path, *logicalOp = cmdExec->op, *prevOp = cmdExec->op;
+	int firstCMD = 1, index = 0;
+	char *logicalOp, *prevOp;
 
+	if (cmdExec != NULL)
+		logicalOp = prevOp = cmdExec->op;
 	while (cmdExec != NULL)
 	{
-		if (built_in(cmdExec->cmd[0]))
-			if (doExec(lastSignal, logicalOp) || firstCMD)
-				*lastSignal = built_in(cmdExec->cmd[0])(cmdExec, envp, lastSignal, buffer);
-
-		else
-		{
-			if (absolutePath(cmdExec->cmd[0]))
-				if (doExec(lastSignal, logicalOp) || firstCMD)
-					execAbsolutePath(cmdExec, lastSignal, envp, buffer);
-
-			else
-			{
-				if (doExec(lastSignal, logicalOp) || firstCMD)
-				{
-					command_path = commandExists(cmdExec->cmd[0], envp);
-					if (command_path != NULL)
-						execCommandPath(cmdExec, lastSignal, envp, command_path, buffer);
-
-					else
-					{
-						perror("command doesn't exist");
-						*lastSignal = 127;
-					}
-				}
-			}
-		}
+		executeCommand(cmdExec, lastSignal, &firstCMD,
+				logicalOp, programName, buffer);
 Here:
 		if (cmdExec->op != NULL)
 		{
@@ -118,6 +98,11 @@ STOPME:
 					else if (*lastSignal == 0 && (_strcmp(prevOp, ";") == 0
 								|| _strcmp(prevOp, "||") == 0))
 						cmdExec = cmdExec->nextCmd;
+					else
+					{
+						logicalOp = cmdExec->op;
+						goto STOPME;
+					}
 				}
 				else if (_strcmp(logicalOp, "||") == 0)
 				{
@@ -125,7 +110,14 @@ STOPME:
 						cmdExec = cmdExec->nextCmd;
 					else if (*lastSignal != 0 && (_strcmp(prevOp, ";") == 0
 								|| _strcmp(prevOp, "&&") == 0))
-						continue;
+					{
+						logicalOp = cmdExec->op;
+					}
+					else
+					{
+						logicalOp = cmdExec->op;
+						goto STOPME;
+					}
 				}
 				else if (_strcmp(logicalOp, ";") == 0)
 					cmdExec = cmdExec->nextCmd;
@@ -138,24 +130,62 @@ STOPME:
 			else
 				cmdExec = cmdExec->nextCmd;
 		}
+	if (index++ == 10)
+		break;
 	firstCMD = 0;
 	}
 
 	return (1);
 }
 
+void executeCommand(Commands *cmdExec, int *lastSignal,
+		int *firstCMD, char *logicalOp, char *programName, char *buffer)
+{
+	char *command_path = NULL;
+
+	if (built_in(cmdExec->cmd[0]))
+	{
+		if (doExec(lastSignal, logicalOp) || firstCMD)
+			*lastSignal = built_in(cmdExec->cmd[0])(cmdExec,
+					lastSignal, programName, buffer);
+	}
+
+	else
+	{
+		if (absolutePath(cmdExec->cmd[0]))
+		{
+			if (doExec(lastSignal, logicalOp) || firstCMD)
+				execAbsolutePath(cmdExec, lastSignal, buffer);
+		}
+
+		else
+		{
+			if (doExec(lastSignal, logicalOp) || firstCMD)
+			{
+				command_path = commandExists(cmdExec->cmd[0]);
+				if (command_path != NULL)
+					execCommandPath(cmdExec, lastSignal, command_path, buffer);
+
+				else
+				{
+					perror(programName);
+					*lastSignal = 127;
+				}
+			}
+		}
+	}
+}
 
 /**
  * commandExists - checks if the command exists in the PATH or not.
  *
  * @cmd: command.
- * @envp: environment variables.
  *
  * Return: if command exists, returns the Path to the command, otherwise NULL.
 */
-char *commandExists(char *cmd, char **envp)
+char *commandExists(char *cmd)
 {
-	char **path = _getenv("PATH", envp);
+	char **path = _getenv("PATH");
 	int index;
 	char *command, *commandPath, *commandFound = NULL;
 
@@ -214,39 +244,33 @@ int doExec(int *lastSignal, char *operator)
  *
  * @cmdExec: commands as Commands type single list.
  * @lastSignal: last status code from functions.
- * @envp: environment variables.
  * @buffer: the original buffer from getline function.
  *
  * Return: Nothing.
  */
-void execAbsolutePath(Commands *cmdExec, int *lastSignal,
-		char **envp, char *buffer)
+void execAbsolutePath(Commands *cmdExec, int *lastSignal, char *buffer)
 {
 	pid_t pid;
+	int status;
 
 	pid = fork();
 	if (pid == -1)
 		perror("fork error - absolute path");
 	else if (pid == 0)
 	{
-		if (access(cmdExec->cmd[0], X_OK) == 0)
-		{
-			*lastSignal = execve(cmdExec->cmd[0], cmdExec->cmd, envp);
-			if (*lastSignal == -1)
-				perror("execve - absolute path");
-		}
-		else
-		{
-			perror("access");
-			*lastSignal = -1;
-		}
+		status = execve(cmdExec->cmd[0], cmdExec->cmd, environ);
+		if (status == -1)
+			perror("execve - absolute path");
+
 		free(buffer);
 		free_commands(cmdExec);
-		fflush(NULL);
-		_exit(*lastSignal);
+		_exit(EXIT_FAILURE);
 	}
 	else
+	{
 		wait(lastSignal);
+		*lastSignal = WEXITSTATUS(*lastSignal);
+	}
 }
 
 /**
@@ -254,14 +278,13 @@ void execAbsolutePath(Commands *cmdExec, int *lastSignal,
  *
  * @cmdExec: commands as Commands type single list.
  * @lastSignal: last status code from functions.
- * @envp: environment variables.
  * @command_path: the command path.
  * @buffer: the original buffer from getline function.
  *
  * Return: Nothing.
  */
 void execCommandPath(Commands *cmdExec, int *lastSignal,
-		char **envp, char *command_path, char *buffer)
+		char *command_path, char *buffer)
 {
 	pid_t pid;
 
@@ -272,7 +295,7 @@ void execCommandPath(Commands *cmdExec, int *lastSignal,
 	{
 		if (access(command_path, X_OK) == 0)
 		{
-			*lastSignal = execve(command_path, cmdExec->cmd, envp);
+			*lastSignal = execve(command_path, cmdExec->cmd, environ);
 			if (*lastSignal == -1)
 				perror("execve - command path");
 		}
@@ -285,11 +308,12 @@ void execCommandPath(Commands *cmdExec, int *lastSignal,
 		fflush(NULL);
 		free(buffer);
 		free(command_path);
-		_exit(*lastSignal);
+		_exit(EXIT_FAILURE);
 	}
 	else
 	{
 		free(command_path);
 		wait(lastSignal);
+		*lastSignal = WEXITSTATUS(*lastSignal);
 	}
 }
