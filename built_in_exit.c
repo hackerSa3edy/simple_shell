@@ -24,7 +24,7 @@ int ___exit(Commands *CMD, int *lastSignal, char *programName, char *buffer)
 	if (argsLen > 1)
 	{
 		status = _atoi(command[1]);
-		if (status == 0 && command[1][0] != '0')
+		if ((status == 0 && command[1][0] != '0') || status < 0)
 		{
 			write(STDERR_FILENO, programName, _strlen(programName));
 			write(STDERR_FILENO, msg, _strlen(msg));
