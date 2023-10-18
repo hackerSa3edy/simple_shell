@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 			free(buffer);
 			if (interactiveMode)
 				write(STDOUT_FILENO, "\n", 1);
-			exit(EXIT_FAILURE);
+			exit(lastSignal);
 		}
 		commands = parser(buffer, bufferLen);
 
