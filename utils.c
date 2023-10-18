@@ -113,28 +113,23 @@ int absolutePath(char *cmd)
  * _getenv - gets the environment value for an env variable.
  *
  * @env: the environment variable.
- * @envp: list of all envs.
  *
  * Return: array of env values for the env variable.
 */
-char **_getenv(char *env, char **envp)
+char **_getenv(char *env)
 {
 	int index, len;
 	char **PATH, **tempPATH;
-	char *env_var = _strdup(env);
+	char **envs = environ;
 
-	env_var = _realloc(env_var, _strlen(env_var) + 1, _strlen(env_var) + 2);
-	env_var = _strcat(env_var, "=");
-
-	for (index = 0; envp[index] != NULL; index++)
+	for (index = 0; envs[index] != NULL; index++)
 	{
-		if (_strncmp(envp[index], env_var, _strlen(env_var)) == 0)
+		if (_strncmp(envs[index], env, _strlen(env)) == 0)
 		{
-			PATH = tokenizedArray(envp[index], "=");
+			PATH = tokenizedArray(envs[index], "=");
 			break;
 		}
 	}
-	free(env_var);
 	for (len = 0; PATH[len] != NULL; len++)
 		len++;
 

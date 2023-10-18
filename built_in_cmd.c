@@ -7,7 +7,7 @@
  *
  * Return: pointer to function.
 */
-int (*built_in(char *cmd))(Commands *, char **, int *, char *)
+int (*built_in(char *cmd))(Commands *, int *, char *, char *)
 {
 	built_in_t commands[] = {
 		{"env", _env},
