@@ -5,11 +5,10 @@
  *
  * @argc: number of arguments.
  * @argv: arguments' value.
- * @envp: environment variables.
  *
  * Return: (0) always success, (EXIT_CODE) otherwise.
  */
-int main(int argc, char **argv, char **envp)
+int main(int argc, char **argv)
 {
 	char *buffer = NULL;
 	size_t bufferSize;
@@ -19,7 +18,6 @@ int main(int argc, char **argv, char **envp)
 	Commands *commands = NULL;
 
 	(void) argc;
-	(void) argv;
 	signal(SIGINT, SIGINT_handler);
 	do {
 		if (interactiveMode)
@@ -31,15 +29,16 @@ int main(int argc, char **argv, char **envp)
 		bufferLen = getline(&buffer, &bufferSize, stdin);
 		if (bufferLen == -1)
 		{
-			write(STDERR_FILENO, "\n", 1);
 			free(buffer);
-			exit(lastSignal);
+			if (interactiveMode)
+				write(STDOUT_FILENO, "\n", 1);
+			exit(EXIT_FAILURE);
 		}
 		commands = parser(buffer, bufferLen);
 
-		execMe(commands, envp, &lastSignal, buffer);
+		execMe(commands, &lastSignal, argv[0], buffer);
 		free_commands(commands);
-	} while (interactiveMode);
+	} while (interactiveMode || bufferLen != -1);
 	free(buffer);
 
 	return (lastSignal);
