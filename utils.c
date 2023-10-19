@@ -119,18 +119,37 @@ int absolutePath(char *cmd)
 char **_getenv(char *env)
 {
 	int index, len;
-	char **PATH, **tempPATH;
+	char **PATH = NULL, **tempPATH = NULL;
 	char **envs = environ;
+	char *tempEnv;
 
+	tempEnv = _strdup(env);
+	tempEnv = _realloc(tempEnv, _strlen(tempEnv) + 1, _strlen(tempEnv) + 2);
+	tempEnv[_strlen(env)] = '=';
+	tempEnv[_strlen(env) + 1] = '\0';
 	for (index = 0; envs[index] != NULL; index++)
 	{
-		if (_strncmp(envs[index], env, _strlen(env)) == 0)
+		if (_strncmp(tempEnv, envs[index], _strlen(tempEnv)) == 0)
 		{
 			PATH = tokenizedArray(envs[index], "=");
 			break;
 		}
 	}
-	for (len = 0; PATH[len] != NULL; len++)
+	free(tempEnv);
+	if (PATH == NULL)
+		return (NULL);
+	else if (*PATH == NULL)
+	{
+		free(PATH);
+		return (NULL);
+	}
+	else if (_strcmp(*PATH, "PATH") == 0 && PATH[1] == NULL)
+	{
+		free_2D(PATH, 1);
+		return (NULL);
+	}
+
+	for (len = 0; PATH[len] != NULL;)
 		len++;
 
 	tempPATH = PATH;

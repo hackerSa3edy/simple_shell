@@ -13,6 +13,8 @@ char *commandExists(char *cmd)
 	int index;
 	char *command, *commandPath, *commandFound = NULL;
 
+	if (path == NULL)
+		return (NULL);
 	command = _strdup("/");
 	command = _realloc(command, _strlen(command) + 1,
 			_strlen(command) + _strlen(cmd) + 1);

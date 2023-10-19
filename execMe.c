@@ -5,12 +5,13 @@
  *
  * @commands: Commands single list to executes its commands.
  * @lastSignal: the signal by syscall.
+ * @cmdNum: the number of executed commands.
  * @programName: the running executable name.
  * @buffer: the original buffer from getline function.
  *
  * Return: lastSignal
 */
-void execMe(Commands *commands, int *lastSignal,
+void execMe(Commands *commands, int *lastSignal, int cmdNum,
 		char *programName, char *buffer)
 {
 	Commands *cmdExec = commands;
@@ -21,7 +22,7 @@ void execMe(Commands *commands, int *lastSignal,
 		logicalOp = prevOp = cmdExec->op;
 	while (cmdExec != NULL)
 	{
-		executeCommand(cmdExec, lastSignal, &firstCMD,
+		executeCommand(cmdExec, lastSignal, &firstCMD, cmdNum,
 				logicalOp, programName, buffer);
 Here:
 		if (cmdExec->op != NULL)
@@ -60,6 +61,7 @@ STOPME:
  * @cmdExec: Commands single list to executes its commands.
  * @lastSignal: the signal by syscall.
  * @firstCMD: (1) indicates this command is first command, (0) otherwise.
+ * @cmdNum: the number of executed commands.
  * @logicalOp: the current logical operator.
  * @programName: the running executable name.
  * @buffer: the original buffer from getline function.
@@ -67,7 +69,8 @@ STOPME:
  * Return: Nothing.
  */
 void executeCommand(Commands *cmdExec, int *lastSignal,
-		int *firstCMD, char *logicalOp, char *programName, char *buffer)
+		int *firstCMD, int cmdNum, char *logicalOp,
+		char *programName, char *buffer)
 {
 	char *command_path = NULL;
 
@@ -98,7 +101,7 @@ void executeCommand(Commands *cmdExec, int *lastSignal,
 
 					else
 					{
-						perror(programName);
+						print_notFoundErr(programName, cmdNum, cmdExec->cmd[0]);
 						*lastSignal = 127;
 					}
 				}
@@ -107,4 +110,28 @@ void executeCommand(Commands *cmdExec, int *lastSignal,
 	}
 	else
 		logicalOp = NULL;
+}
+
+/**
+ * print_notFoundErr - prints the 127 status code error msg.
+ *
+ * @programName: the current executable program name.
+ * @cmdNum: number of the command.
+ * @command: the command which didn't find in PATH.
+ *
+ * Return: Nothing.
+ */
+void print_notFoundErr(char *programName, int cmdNum, char *command)
+{
+	char *numberInString, *msg = ": not found\n";
+
+	numberInString = _btoi(cmdNum);
+	write(STDERR_FILENO, programName, _strlen(programName));
+	write(STDERR_FILENO, ": ", 2);
+	write(STDERR_FILENO, numberInString, _strlen(numberInString));
+	write(STDERR_FILENO, ": ", 2);
+	write(STDERR_FILENO, command, _strlen(command));
+	write(STDERR_FILENO, msg, _strlen(msg));
+
+	free(numberInString);
 }
