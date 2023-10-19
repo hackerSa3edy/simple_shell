@@ -47,14 +47,16 @@ void SIGINT_handler(int);
 char *_strdup(char *);
 int _strlen(char *);
 int _atoi(char *);
+char *_btoi(int);
+int num_of_digits(unsigned int);
 void *_realloc(void *, unsigned int, unsigned int);
 char *_strcat(char *, char *);
 int _strcmp(char *, char *);
 int _strncmp(char *, char *, int);
 char **_getenv(char *);
 void free_2D(char **, int);
-void executeCommand(Commands *, int *, int *, char *, char *, char *);
-void execMe(Commands *, int *, char *, char *);
+void executeCommand(Commands *, int *, int *, int, char *, char *, char *);
+void execMe(Commands *, int *, int, char *, char *);
 int (*built_in(char *))(Commands *, int *, char *, char *);
 int absolutePath(char *);
 char *commandExists(char *);
@@ -71,5 +73,8 @@ int _env(Commands *, int *, char *, char *);
 int orOperator(Commands **, int *, char **, char **);
 int andOperator(Commands **, int *, char **, char **);
 int operatorsChain(Commands **, int *, char **, char **);
+
+/* Error's print functions */
+void print_notFoundErr(char *, int, char *);
 
 #endif /* MAIN_H */

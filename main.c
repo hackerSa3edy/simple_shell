@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	char *buffer = NULL;
 	size_t bufferSize;
 	ssize_t bufferLen;
-	int lastSignal = 0;
+	int lastSignal = 0, commandNumber = 0;
 	int interactiveMode = isatty(STDIN_FILENO);
 	Commands *commands = NULL;
 
@@ -36,7 +36,8 @@ int main(int argc, char **argv)
 		}
 		commands = parser(buffer, bufferLen);
 
-		execMe(commands, &lastSignal, argv[0], buffer);
+		commandNumber++;
+		execMe(commands, &lastSignal, commandNumber, argv[0], buffer);
 		free_commands(commands);
 	} while (interactiveMode || bufferLen != -1);
 	free(buffer);
