@@ -39,8 +39,8 @@ typedef struct built_in_s
 	int (*func)(Commands *, int *, char *, char *);
 } built_in_t;
 
-Commands *parser(char *, ssize_t);
-void *safeBuffer(char *, ssize_t);
+Commands *parser(char *);
+void *safeBuffer(char *);
 char **tokenizedArray(char *, char *);
 Commands *add_node_end(size_t, size_t, char *, char **, Commands **);
 void SIGINT_handler(int);
@@ -76,5 +76,8 @@ int operatorsChain(Commands **, int *, char **, char **);
 
 /* Error's print functions */
 void print_notFoundErr(char *, int, char *);
+
+/* Execute commands from a file function */
+void execFile(char **, int *);
 
 #endif /* MAIN_H */
