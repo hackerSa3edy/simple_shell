@@ -38,7 +38,7 @@ int cd(Commands *CMD, int *lastSignal, int cmdNum,
 	}
 	else if (_strcmp(CMD->cmd[1], "-") == 0)
 	{
-		if (cd_preDir(&env, cwd, &dir))
+		if (cd_prevDir(&env, cwd, &dir))
 			return (retStatus);
 	}
 	else
