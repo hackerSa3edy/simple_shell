@@ -14,9 +14,6 @@
 int _unsetenv(Commands *CMD, int *lastSignal, int cmdNum,
 		char *programName, char *buffer)
 {
-	char *env, *unsetEnv;
-	int index, environLen, newEnvironLen = 0;
-
 	(void) buffer;
 	(void) programName;
 	(void) cmdNum;
@@ -24,24 +21,6 @@ int _unsetenv(Commands *CMD, int *lastSignal, int cmdNum,
 	if (CMD->cmd[1] == NULL)
 		return (EXIT_SUCCESS);
 
-	for (environLen = 0; environ[environLen];)
-		environLen++;
-
-	env = CMD->cmd[1];
-	unsetEnv = _strdup(env);
-	unsetEnv = _realloc(unsetEnv, _strlen(unsetEnv) + 1, _strlen(unsetEnv) + 2);
-	unsetEnv[_strlen(env)] = '=';
-	unsetEnv[_strlen(env) + 1] = '\0';
-
-	for (index = 0; environ[index]; index++)
-	{
-		if (_strncmp(unsetEnv, environ[index], _strlen(unsetEnv)) != 0)
-		{
-			environ[newEnvironLen] = environ[index];
-			newEnvironLen++;
-		}
-	}
-	environ[newEnvironLen] = NULL;
-	free(unsetEnv);
+	unsetenv(CMD->cmd[1]);
 	return (EXIT_SUCCESS);
 }
