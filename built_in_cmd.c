@@ -7,11 +7,14 @@
  *
  * Return: pointer to function.
 */
-int (*built_in(char *cmd))(Commands *, int *, char *, char *)
+int (*built_in(char *cmd))(Commands *, int *, int, char *, char *)
 {
 	built_in_t commands[] = {
 		{"env", _env},
 		{"exit", ___exit},
+		{"cd", cd},
+		{"setenv", _setenv},
+		{"unsetenv", _unsetenv},
 		{NULL, NULL}
 	};
 	int index;

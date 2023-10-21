@@ -4,18 +4,17 @@
  * parser - make a Commands single list of commands and its logical operators.
  *
  * @buffer: buffer to be parsed.
- * @bufferLen: buffer length.
  *
  * Return: pointer to the Commands single list.
  */
-Commands *parser(char *buffer, ssize_t bufferLen)
+Commands *parser(char *buffer)
 {
 	Commands *commands = NULL;
 	size_t index, prevIndex = 0, foundOp = 0, firstCMD = 1;
 	char **tokens = NULL;
 	char *safe_buffer = NULL;
 
-	safe_buffer = safeBuffer(buffer, bufferLen);
+	safe_buffer = safeBuffer(buffer);
 	tokens = tokenizedArray(safe_buffer, " ");
 	free(safe_buffer);
 
@@ -47,16 +46,22 @@ Commands *parser(char *buffer, ssize_t bufferLen)
  * safeBuffer - delete the last character '\n'.
  *
  * @buffer: buffer to processed.
- * @bufferLen: buffer length.
  *
  * Return: pointer to the safe buffer.
  */
-void *safeBuffer(char *buffer, ssize_t bufferLen)
+void *safeBuffer(char *buffer)
 {
-	char *safe_buffer = malloc(bufferLen);
-	int index;
+	char *safe_buffer;
+	int index, len;
 
-	for (index = 0; buffer[index + 1]; index++)
+	for (len = 0; buffer[len + 1]; len++)
+	{
+		if (buffer[len] == '#' && (len == 0 || buffer[len - 1] == ' '))
+			break;
+	}
+	safe_buffer = malloc(len + 1);
+
+	for (index = 0; index < len; index++)
 		safe_buffer[index] = buffer[index];
 
 	safe_buffer[index] = '\0';

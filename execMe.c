@@ -80,7 +80,7 @@ void executeCommand(Commands *cmdExec, int *lastSignal,
 		{
 			if (doExec(lastSignal, logicalOp) || firstCMD)
 				*lastSignal = built_in(cmdExec->cmd[0])(cmdExec,
-						lastSignal, programName, buffer);
+						lastSignal, cmdNum, programName, buffer);
 		}
 
 		else

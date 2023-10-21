@@ -143,7 +143,7 @@ char **_getenv(char *env)
 		free(PATH);
 		return (NULL);
 	}
-	else if (_strcmp(*PATH, "PATH") == 0 && PATH[1] == NULL)
+	else if (_strcmp(*PATH, env) == 0 && PATH[1] == NULL)
 	{
 		free_2D(PATH, 1);
 		return (NULL);
