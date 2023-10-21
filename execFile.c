@@ -1,5 +1,13 @@
 #include "main.h"
 
+/**
+ * execFile - executes commands from file.
+ *
+ * @arguments: user input.
+ * @lastSignal: last status for the final executed command.
+ *
+ * Return: Nothing.
+ */
 void execFile(char **arguments, int *lastSignal)
 {
 	int commandNumber = 0;
