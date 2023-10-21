@@ -30,7 +30,7 @@ int cd(Commands *CMD, int *lastSignal, int cmdNum,
 		if (env == NULL || *env == NULL)
 		{
 			free(cwd);
-			if (*env == NULL)
+			if (env != NULL)
 				free(env);
 			return (retStatus);
 		}
