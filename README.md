@@ -1,6 +1,6 @@
 # Project: 0x16. C - Simple Shell
 
-![Gates of Shell](./shell.jpeg)
+![Gates of Shell](./media/shell.jpeg)
 
 A simple UNIX command language interpreter that reads commands from either a file or standard input and executes them.
 
@@ -85,7 +85,7 @@ cd simple_shell
 3. Compile the program:
 
 ```bash
-    gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 ```
 
 ## Usage
